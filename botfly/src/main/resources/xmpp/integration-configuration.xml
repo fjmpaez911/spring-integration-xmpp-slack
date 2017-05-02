@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/integration"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:int="http://www.springframework.org/schema/integration"
+             xmlns:xmpp="http://www.springframework.org/schema/integration/xmpp"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+             http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+             http://www.springframework.org/schema/integration
+             http://www.springframework.org/schema/integration/spring-integration.xsd
+             http://www.springframework.org/schema/integration/xmpp
+             http://www.springframework.org/schema/integration/xmpp/spring-integration-xmpp.xsd">
+
+
+    <channel id="sendChannel"/>
+    <channel id="receiveChannel"/>
+    <channel id="discardChannel"/>
+    
+    
+    <int:gateway 
+    	id="gateway" 
+    	default-request-channel="sendChannel" 
+    	service-interface="com.fjmpaez.xmpp.Gateway"/>
+    
+	<xmpp:outbound-channel-adapter channel="sendChannel"/>
+    
+
+    <xmpp:inbound-channel-adapter channel="receiveChannel"/>
+
+    <chain input-channel="receiveChannel">
+        <filter expression="payload.startsWith('command ')" discard-channel="discardChannel"/>
+        <service-activator ref="workingService" method="processMessage"/>
+    </chain>
+
+
+    <service-activator input-channel="discardChannel" ref="workingService" method="discardMessages"/>
+
+
+</beans:beans>

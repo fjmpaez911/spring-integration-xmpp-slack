@@ -1,0 +1,1 @@
+If you want to build your own bot under Slack here you are the main structure ready! The only thing that you have to do is to code the business logic for the operations that you want your bot is the responsible for. 
